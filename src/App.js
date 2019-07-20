@@ -1,26 +1,57 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import Headers from './component/Headers'
+import Main from './component/Main'
+import Info from './component/Info'
+import Footer from './component/Footer'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default class App extends React.Component {
+  state = {
+    list: this.props.store.getState().todos,
+  }
+  componentDidMount() {
+    this.props.store.subscribe(() => {
+      this.setState({
+        list: this.props.store.getState().todos,
+      })
+    })
+  }
+
+  VisibilityFilter = active => {
+    let filterList = this.props.store.getState().todos
+    switch (active) {
+      case '':
+        return this.setState({
+          list: filterList,
+        })
+
+      case 'active':
+        return this.setState({
+          list: filterList.filter(item => item.isCompleted),
+        })
+
+      case 'complated':
+        return this.setState({
+          list: filterList.filter(item => !item.isCompleted),
+        })
+
+      default:
+        return filterList
+    }
+  }
+
+  render() {
+    return (
+      <div>
+        <section className="todoapp">
+          <Headers />
+          <Main list={this.state.list} />
+          <Footer
+            list={this.state.list}
+            VisibilityFilter={this.VisibilityFilter}
+          />
+        </section>
+        <Info />
+      </div>
+    )
+  }
 }
-
-export default App;

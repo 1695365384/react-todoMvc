@@ -1,12 +1,27 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import App from './app'
+import './static/css/base.css'
+import './static/css/index.css'
+import {createStore} from 'redux'
+import TodoApp from './reducers/index'
+import {Provider} from 'react-redux'
+let store = createStore(TodoApp)
 
-ReactDOM.render(<App />, document.getElementById('root'));
+console.log(store.getState())
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+// 每次 state 更新时，打印日志
+// 注意 subscribe() 返回一个函数用来注销监听器
+const unsubscribe = store.subscribe(() => {
+  console.log(store.getState())
+})
+
+
+unsubscribe()
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App store={store} />
+  </Provider>,
+  document.getElementById('root')
+)
